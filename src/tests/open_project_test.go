@@ -1,9 +1,28 @@
 package tests
 
 import (
+	"playwright/example/src/infra/po"
+	"time"
+
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/require"
 )
+
+func (s *Suite) TestCreateNewIssueWithPO() {
+	p := s.page
+
+	// Create an instance of LoginPage
+	loginPage := po.NewLoginPage(p, s.T())
+	welcomePage := loginPage.
+		GoTo().
+		ClickSignInLink().
+		FillUsername("admin").
+		ClickPassword().
+		FillPassword("adminadmin").
+		ClickSignInButton()
+	welcomePage.SelectProject("Demo project")
+	time.Sleep(1 * time.Second)
+}
 
 func (s *Suite) TestCreateNewIssue() {
 	require := require.New(s.T())
@@ -29,7 +48,7 @@ func (s *Suite) TestCreateNewIssue() {
 	require.Nil(err)
 	err = p.Locator("wp-create-button").GetByLabel("Create new work package").Click()
 	require.Nil(err)
-	err = s.page.GetByLabel("Task", playwright.PageGetByLabelOptions{Exact: playwright.Bool(true)}).Click()
+	err = p.GetByLabel("Task", playwright.PageGetByLabelOptions{Exact: playwright.Bool(true)}).Click()
 	require.Nil(err)
 	err = p.GetByLabel("Subject", playwright.PageGetByLabelOptions{Exact: playwright.Bool(true)}).Fill(taskName)
 	require.Nil(err)
