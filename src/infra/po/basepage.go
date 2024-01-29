@@ -4,11 +4,18 @@ import (
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
-	"github.com/stretchr/testify/require"
 )
 
 type BasePage struct {
-	page      playwright.Page
-	t         testing.T
-	assertion require.Assertions
+	ActionBot
+	// In case the page is inside iFrame, all elements will be searched inside the frame
+
+	frameLocator playwright.FrameLocator
+}
+
+func NewBasePage(page playwright.Page, frameLocator playwright.FrameLocator, t *testing.T) *BasePage {
+	b := &BasePage{ActionBot: *NewActionBot(page, t)}
+	b.frameLocator = frameLocator
+	b.TakeScreenshot("")
+	return b
 }

@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"playwright/example/src/infra/po"
+	"playwright-go/src/infra/po"
 	"time"
 
 	"github.com/playwright-community/playwright-go"
@@ -20,11 +20,12 @@ func (s *Suite) TestCreateNewIssueWithPO() {
 		ClickPassword().
 		FillPassword("adminadmin").
 		ClickSignInButton()
-	welcomePage.SelectProject("Demo project")
+	allOpenWpPage := welcomePage.SelectProject("Demo project").MainMenuPage.ClickWorkPackagesItm()
+	allOpenWpPage.ClickOnCreateTask()
 	time.Sleep(1 * time.Second)
 }
 
-func (s *Suite) TestCreateNewIssue() {
+func (s *Suite) TestCreateNewIssueFlat() {
 	require := require.New(s.T())
 	p := s.page
 	taskName := "Test task"

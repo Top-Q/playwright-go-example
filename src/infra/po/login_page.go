@@ -4,18 +4,19 @@ import (
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
-	"github.com/stretchr/testify/require"
 )
 
 type LoginPage struct {
 	BasePage
+	signInLnk playwright.Locator
 	username  playwright.Locator
 	password  playwright.Locator
 	signInBtn playwright.Locator
 }
 
 func NewLoginPage(p playwright.Page, t *testing.T) *LoginPage {
-	l := &LoginPage{BasePage: BasePage{page: p, t: *t, assertion: *require.New(t)}}
+	l := &LoginPage{BasePage: *NewBasePage(p, nil, t)}
+	l.signInLnk = l.page.GetByRole("link", playwright.PageGetByRoleOptions{Name: *playwright.String("Sign in ")})
 	l.username = l.page.GetByLabel("Username")
 	l.password = l.page.GetByLabel("Password")
 	l.signInBtn = l.page.GetByRole("button", playwright.PageGetByRoleOptions{Name: *playwright.String("Sign in")})
@@ -23,36 +24,31 @@ func NewLoginPage(p playwright.Page, t *testing.T) *LoginPage {
 }
 
 func (l *LoginPage) GoTo() *LoginPage {
-	_, err := l.page.Goto("http://localhost:8080/")
-	l.assertion.Nil(err)
+	l.Navigate("http://localhost:8080/")
 	return l
 }
 
 func (l *LoginPage) ClickSignInLink() *LoginPage {
-	err := l.page.GetByRole("link", playwright.PageGetByRoleOptions{Name: *playwright.String("Sign in ")}).Click()
-	l.assertion.Nil(err)
+	l.Click(l.signInLnk)
 	return l
 }
 
 func (l *LoginPage) FillUsername(username string) *LoginPage {
-	err := l.username.Fill(username)
-	l.assertion.Nil(err)
+	l.Fill(l.username, username)
 	return l
 }
 
 func (l *LoginPage) ClickPassword() *LoginPage {
-	err := l.password.Click()
-	l.assertion.Nil(err)
+	l.Click(l.password)
 	return l
 }
 
 func (l *LoginPage) FillPassword(password string) *LoginPage {
-	err := l.password.Fill(password)
-	l.assertion.Nil(err)
+	l.Fill(l.password, password)
 	return l
 }
 
 func (l *LoginPage) ClickSignInButton() *WelcomePage {
-	l.signInBtn.Click()
+	l.Click(l.signInBtn)
 	return NewWelcomePage(l.page, &l.t)
 }
