@@ -16,6 +16,8 @@ type LoginPage struct {
 
 func NewLoginPage(p playwright.Page, t *testing.T) *LoginPage {
 	l := &LoginPage{BasePage: *NewBasePage(p, nil, t)}
+	// Example of how to use frameLocator
+	// l.signInLnk = l.frameLocator.GetByRole("link", playwright.PageGetByRoleOptions{Name: *playwright.String("Sign in ")})
 	l.signInLnk = l.page.GetByRole("link", playwright.PageGetByRoleOptions{Name: *playwright.String("Sign in ")})
 	l.username = l.page.GetByLabel("Username")
 	l.password = l.page.GetByLabel("Password")

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"testing"
@@ -64,13 +63,13 @@ func (a *ActionBot) TakeScreenshot(description string) {
 	if description == "" {
 		description = "screenshot"
 	}
-	testName := strings.Split(a.t.Name(), "/")[1]
 	_, err := os.Stat("screenshots/")
 	if os.IsNotExist(err) {
 		// Directory does not exist, create it
 		err := os.Mkdir("screenshots/", 0777)
 		a.assertion.NoError(err, "Failed to create screenshots directory at screenshots")
 	}
+	testName := filepath.Base(a.t.Name())
 	testScreenshotDir := filepath.Join("screenshots", testName)
 	_, err = os.Stat(testScreenshotDir)
 	if os.IsNotExist(err) {
@@ -78,7 +77,7 @@ func (a *ActionBot) TakeScreenshot(description string) {
 		err := os.Mkdir(testScreenshotDir, 0777)
 		a.assertion.NoError(err, "Failed to create screenshots directory at "+testScreenshotDir)
 	}
-	screenshotName := fmt.Sprintf("%s_%s_%d.png", filepath.Base(a.t.Name()), description, time.Now().Unix())
+	screenshotName := fmt.Sprintf("%s_%s_%d.png", testName, description, time.Now().Unix())
 	screenshotPath := filepath.Join(testScreenshotDir, screenshotName)
 
 	//screenshot, err := page.Screenshot()
